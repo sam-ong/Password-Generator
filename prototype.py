@@ -14,12 +14,12 @@ def showPassword():
         length = int(entry.get())
         if length < 6:
             pwBox.configure(text = "Length too short!")
-            pwBox.grid(row = 5, columnspan = 2, ipady = 10)
+            showPwBox()
             entry.delete(0,END)
             return
         elif length >14:
             pwBox.configure(text = "Length too long!")
-            pwBox.grid(row = 5, columnspan = 2, ipady = 10)
+            showPwBox()
             entry.delete(0,END)
             return
         password = generatePassword(length)
@@ -27,52 +27,59 @@ def showPassword():
     except ValueError:
         pwBox.configure(text = "Input has to be a number")
         entry.delete(0,END)
+    showPwBox()
+
+def showPwBox():
     pwBox.grid(row = 5, columnspan = 2, ipady = 10)
 
+#Generate the password of given length
 def generatePassword(length):
-    wordLength = length-2
-    if number.get() == 0: wordLength += 1
-    if symbol.get() == 0: wordLength += 1
+    wordLength = length
+    if number.get() == 1: wordLength -= 1
+    if symbol.get() == 1: wordLength -= 1
 
     try:
-        with open ("words.txt", "r") as file:
+        with open ("words.txt", "r") as file: #Open text file
             words = set(file.read().split())
             words1 = []
-            for word in words:
+            for word in words: #Find words of specific length and put it into a list
                 if len(word) == wordLength:
                     words1.append(word)
-            password = choice(words1)
-            if number.get() == 1:
-                password += str(choice([0,1,2,3,4,5,6,7,8,9]))
+            password = choice(words1) #Get random word from list of words
             if upperCase.get() == 1:
-                password = password.title()
+                password = password.title() #Capitalise
+            if number.get() == 1:
+                password += str(choice(string.digits)) #Add number
             if symbol.get() == 1:
-                password += str(choice(string.punctuation))
-            return password
+                password += str(choice(string.punctuation)) #Add symbol
+            return shuffleWord(password) #Shuffle string
     except IOError:
         return "FILE LOAD ERROR"
+
+#Mix up characters in string
+def shuffleWord(word):
+    word = list(word)
+    shuffle(word)
+    return ''.join(word)
 
 #Create GUI for a window
 window = Tk()
 window.geometry("400x300")
 window.resizable(0,0)
 window.grid_propagate(0)
-
 window.title("Password generator")
-upperCase = IntVar()
+
+upperCase = IntVar(value = 1)
 upperCaseCheckBox = Checkbutton(window, text = "UpperCase letter", variable = upperCase)
-
-number = IntVar()
+number = IntVar(value = 1)
 numberCheckBox = Checkbutton(window, text = "Number: 1234567890", variable = number)
-
-symbol = IntVar()
+symbol = IntVar(value = 1)
 symbolCheckBox = Checkbutton(window, text = "Symbol: !@#$%^&*()", variable = symbol)
 
 label = Label(window, text = "Length of password (6-14):")
 entry = Entry(window)
 btn = Button(window, text ="Generate password!", command = showPassword)
 pwBox = Label(window)
-
 
 #Configure & format widgets
 window.config(bg = bgColor)
