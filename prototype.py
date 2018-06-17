@@ -35,7 +35,6 @@ def showPassword():
 def copyToClipboard():
     window.clipboard_clear()
     window.clipboard_append(password)
-    print(window.clipboard_get())
     c2c.configure(text="Copied!")
 
 #Generate the password of given length
