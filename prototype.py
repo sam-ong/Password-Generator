@@ -4,7 +4,7 @@ from random import *
 
 smallFont = ["Courier", 14]
 avenir = ["Avenir", 14]
-bgColor = "#FAF6F6"
+bgColor = "#F9EEF5"
 textColor = "#000000"
 
 
@@ -22,13 +22,35 @@ def showPassword():
             pwBox.grid(row = 5, columnspan = 2, ipady = 10)
             entry.delete(0,END)
             return
-        password = str(length)
+        password = generatePassword(length)
         pwBox.configure(text = "Generated password: " + password)
     except ValueError:
         pwBox.configure(text = "Input has to be a number")
         entry.delete(0,END)
     pwBox.grid(row = 5, columnspan = 2, ipady = 10)
 
+def generatePassword(length):
+    wordLength = length-2
+    if number.get() == 0: wordLength += 1
+    if symbol.get() == 0: wordLength += 1
+
+    try:
+        with open ("words.txt", "r") as file:
+            words = set(file.read().split())
+            words1 = []
+            for word in words:
+                if len(word) == wordLength:
+                    words1.append(word)
+            password = choice(words1)
+            if number.get() == 1:
+                password += str(choice([0,1,2,3,4,5,6,7,8,9]))
+            if upperCase.get() == 1:
+                password = password.title()
+            if symbol.get() == 1:
+                password += str(choice(string.punctuation))
+            return password
+    except IOError:
+        return "FILE LOAD ERROR"
 
 #Create GUI for a window
 window = Tk()
@@ -57,7 +79,7 @@ window.config(bg = bgColor)
 label.config(bg = bgColor, fg = textColor, font = avenir)
 entry.config(bg = bgColor, font = avenir)
 btn.config(bg = bgColor, font = avenir)
-pwBox.config(bg = bgColor, font = ["Verdana", 15, "bold"])
+pwBox.config(bg = bgColor, font = ["Verdana", 14])
 upperCaseCheckBox.config(bg = bgColor, font = avenir)
 numberCheckBox.config(bg = bgColor, font = avenir)
 symbolCheckBox.config(bg = bgColor, font = avenir)
