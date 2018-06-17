@@ -6,31 +6,37 @@ smallFont = ["Courier", 14]
 avenir = ["Avenir", 14]
 bgColor = "#F9EEF5"
 textColor = "#000000"
-
-
+password = ""
 #button function that occurs when button is pressed
 def showPassword():
+    c2c.grid_forget()
     try:
         length = int(entry.get())
         if length < 6:
             pwBox.configure(text = "Length too short!")
-            showPwBox()
+            pwBox.grid(row = 5, columnspan = 2, ipady = 10)
             entry.delete(0,END)
             return
         elif length >14:
             pwBox.configure(text = "Length too long!")
-            showPwBox()
+            pwBox.grid(row = 5, columnspan = 2, ipady = 10)
             entry.delete(0,END)
             return
+        global password
         password = generatePassword(length)
         pwBox.configure(text = "Generated password: " + password)
+        c2c.grid(row = 6, columnspan = 2, ipady = 5, ipadx = 5)
     except ValueError:
         pwBox.configure(text = "Input has to be a number")
         entry.delete(0,END)
-    showPwBox()
-
-def showPwBox():
     pwBox.grid(row = 5, columnspan = 2, ipady = 10)
+
+#Copy to clipboard method
+def copyToClipboard():
+    window.clipboard_clear()
+    window.clipboard_append(password)
+    print(window.clipboard_get())
+    c2c.configure(text="Copied!")
 
 #Generate the password of given length
 def generatePassword(length):
@@ -80,6 +86,7 @@ label = Label(window, text = "Length of password (6-14):")
 entry = Entry(window)
 btn = Button(window, text ="Generate password!", command = showPassword)
 pwBox = Label(window)
+c2c = Button(window, text ="Copy to clipboard", command = copyToClipboard)
 
 #Configure & format widgets
 window.config(bg = bgColor)
@@ -90,6 +97,7 @@ pwBox.config(bg = bgColor, font = ["Verdana", 14])
 upperCaseCheckBox.config(bg = bgColor, font = avenir)
 numberCheckBox.config(bg = bgColor, font = avenir)
 symbolCheckBox.config(bg = bgColor, font = avenir)
+c2c.config(bg = bgColor, font = avenir)
 
 #Add all to window
 upperCaseCheckBox.grid(row = 0, sticky = W)
